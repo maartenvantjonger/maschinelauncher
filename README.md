@@ -13,7 +13,7 @@ It recognizes the following controllers:
 
 # Download #
 
-Download the latest release here: https://bitbucket.org/maartenvantjonger/maschinelauncher/downloads/MaschineLauncher-20171129.msi
+Download the latest release here: https://github.com/maartenvantjonger/maschinelauncher/releases
 
 # Configuration #
 
