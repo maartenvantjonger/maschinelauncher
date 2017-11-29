@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?define Name = "MaschineLauncher" ?>
+<?define DisplayName = "Maschine Launcher" ?>
+<?define Description = "Launches the Maschine application when a Maschine hardware controller is plugged in." ?>
+<?define Manufacturer = "Maarten van Tjonger" ?>
+<?define Version = "1.0.0" ?>
+<?define UpgradeCode = "545b48a7-c100-43f1-b752-de28666c6275" ?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="$(var.DisplayName)" Language="1033" Version="$(var.Version)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of $(var.DisplayName) is already installed." />
+    <MediaTemplate CompressionLevel="high" EmbedCab="yes" />
+
+    <Feature Id="AppFeature" Title="Setup" ConfigurableDirectory="INSTALLFOLDER" Level="1">
+      <ComponentRef Id="AppFiles" />
+      <ComponentRef Id="AppRegistryValues" />
+    </Feature>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="$(var.DisplayName)" />
+      </Directory>
+    </Directory>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <UI>
+      <UIRef Id="WixUI_InstallDir" />
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg" Order="2">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">1</Publish>
+    </UI>
+
+    <CustomAction Id="AppLaunch" FileKey="AppExecutable" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
+    <CustomAction Id="AppClose" Directory="INSTALLFOLDER" ExeCommand="taskkill /f /im $(var.MaschineLauncher.TargetFileName)" Execute="immediate" Return="asyncWait" />
+
+    <InstallExecuteSequence>
+      <Custom Action="AppLaunch" After="InstallFinalize" />
+      <Custom Action="AppClose" After="RemoveFiles" />
+    </InstallExecuteSequence>
+
+    <Property Id="APPLICATIONPATH" Value="C:\Program Files\Native Instruments\Maschine 2\Maschine 2.exe" />
+  </Product>
+
+  <Fragment>
+    <Component Id="AppFiles" Directory="INSTALLFOLDER" Guid="da88ad08-fef1-42e0-8df1-dc70a733c740">
+      <RemoveFile Id="AllFiles" Name="*.*" On="both" />
+      <File Id="AppExecutable" Source="$(var.MaschineLauncher.TargetPath)" KeyPath="yes" />
+      <File Source="$(var.MaschineLauncher.TargetPath).config" />
+      <File Source="$(var.MaschineLauncher.TargetDir)log4net.dll" />
+    </Component>
+  </Fragment>
+
+  <Fragment>
+    <Component Id="AppRegistryValues" Directory="INSTALLFOLDER">
+      <RegistryKey Root="HKCU" Key="Software\Microsoft\Windows\CurrentVersion\Run">
+        <RegistryValue Type="string" Name="$(var.Name)" Value="[INSTALLFOLDER]$(var.MaschineLauncher.TargetFileName)" />
+      </RegistryKey>
+    </Component>
+  </Fragment>
+</Wix>
