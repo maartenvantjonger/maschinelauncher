@@ -8,6 +8,7 @@ It recognizes the following controllers:
 - Maschine MK3
 - Maschine Mikro MK1
 - Maschine Mikro MK2
+- Maschine Mikro MK3
 - Maschine Studio MK1
 - Maschine Jam MK1
 
